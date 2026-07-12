@@ -1,137 +1,313 @@
-<div align="center">
-  
-# 🏭 AI-Powered Predictive Maintenance System
+# 🏭 AI-Powered Predictive Maintenance Platform for Smart Manufacturing
 
-**A full-stack, real-time machine learning prediction system for industrial predictive maintenance, built by merging Data Science with Mechatronics Engineering.**
-
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?style=for-the-badge&logo=streamlit)](https://streamlit.io)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-Random_Forest-F7931E?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org/)
-[![Pandas](https://img.shields.io/badge/Pandas-Data_Processing-150458?style=for-the-badge&logo=pandas)](https://pandas.pydata.org/)
-[![Plotly](https://img.shields.io/badge/Plotly-Data_Visualization-3F4F75?style=for-the-badge&logo=plotly)](https://plotly.com/)
-
-</div>
+An AI-powered predictive maintenance platform that simulates real-time industrial machine telemetry and predicts equipment failures using Machine Learning. The project demonstrates how AI can be applied in Industry 4.0 manufacturing environments to improve equipment reliability, reduce downtime, and support data-driven maintenance decisions.
 
 ---
 
 ## 📖 Overview
-In modern Industry 4.0 factories, identifying when a machine is going to fail before it actually breaks down can save millions of dollars in downtime and maintenance costs. 
 
-This project simulates real-time machine/sensor telemetry (like Rotational Speed, Torque, Air Temperature, and Tool Wear) and streams it to a live digital-twin dashboard. The Dashboard processes the incoming sensor data point-by-point, dynamically predicting potential failures using an AI Classification model trained to recognize fault signatures before critical damage occurs.
+Modern manufacturing facilities rely on continuous monitoring of equipment health to maximize productivity and minimize unexpected failures.
 
-<br>
+This project simulates real-time machine sensor data—including rotational speed, torque, air temperature, process temperature, and tool wear—and processes it through a Machine Learning pipeline to estimate the probability of equipment failure.
 
-<div align="center">
-  
-![Live Demo](PMMS.gif)
-  
-</div>
-
-<br>
+The system combines data simulation, feature engineering, machine learning inference, and interactive visualization to demonstrate an end-to-end predictive maintenance workflow for industrial environments.
 
 ---
 
+## ✨ Key Features
 
+- 🤖 Machine Learning-based equipment failure prediction
+- 📊 Real-time industrial telemetry simulation
+- 📈 Interactive monitoring dashboard using Streamlit
+- 📉 Live visualization of machine health metrics
+- ⚙️ Automated feature preprocessing pipeline
+- 📦 Modular project architecture
+- 💾 Serialized ML model using Joblib
+- 🔄 Continuous real-time inference
+- 📊 Industrial sensor data analysis
 
-## 🔬 Technical Deep Dive & Code Architecture
+---
 
-The underlying structure of this system is split into multiple highly-decoupled modules focusing on robust data pipelines and ML inference.
+## 🏭 Industry Applications
 
-### 1. The Machine Learning Engine (`train_model.py`)
-At the core of our predictions lies the `AI4I 2020 Predictive Maintenance Dataset`.
-* **Feature Engineering:** Unique identifiers and specific failure subtypes (like TWF, HDF) are dropped to prevent target leakage. Categorical parameters like Machine Quality `Type` (L, M, H) are transformed using `OneHotEncoder`.
-* **Imbalance Handling:** In real-world data, physical failures are rare anomalies. We tackle this distribution imbalance using `class_weight='balanced'` within the `RandomForestClassifier` pipeline.
-* **Pipeline Export:** The fully fitted `StandardScaler` and `RandomForest` are bundled together via `sklearn.pipeline` and serialized using `joblib` into the `models/` directory for live inference.
+This solution can be applied to:
 
-#### Model Evaluation & Algorithm Selection
-During the development phase, we evaluated multiple classification algorithms to determine the best fit for this specific industrial dataset. While Logistic Regression struggled with the non-linear relationships of sensor data, **XGBoost** and **Random Forest** performed exceptionally well. We ultimately selected the Random Forest Classifier because it offered the most stable **F1-Score** against the imbalanced minority class (actual failures) while maintaining a lower risk of overfitting on unseen sensor noise compared to XGBoost.
+- Automotive Manufacturing
+- Smart Factories
+- CNC Machines
+- Industrial Robotics
+- Assembly Lines
+- Production Equipment Monitoring
+- Preventive & Predictive Maintenance
+- Manufacturing Quality Improvement
+- Equipment Health Monitoring
 
-| Metric | Score | Note |
-| --- | --- | --- |
-| **Accuracy** | 98.0% | Overall correct predictions |
-| **F1-Score** | 0.59 | Harmonic mean of Precision and Recall on the minority (failure) class |
-| **Precision** | 0.97 | When it predicts failure, it is 97% correct |
-| **Recall** | 0.43 | Ability to catch actual failures amidst normal operations |
+---
 
-<br>
+# 🛠 Tech Stack
 
-![Screenshot](confusion_matrix.png)
+### Programming
 
-</div>
+- Python
 
-<br>
+### Machine Learning
 
-### 2. Live Telemetry Simulator (`simulator.py`)
-To mimic a real physical PLC (Programmable Logic Controller) or a SCADA system, this script acts as an eternal publisher.
-* **Natural Degradation Physics:** It generates initial stable parameters and slowly adds Gaussian noise to heat and torque profiles. 
-* **Anomaly Triggers:** After a specific epoch threshold, the machine begins to deliberately overexert—rotational speed drops, torque spikes, and process temperature climbs rapidly.
-* **Data Pipeline:** Instead of locking network ports (like UDP) which often fail in multi-threaded UI environments, it safely writes continuous JSON telemetry to `data/shared_data.json` at 1Hz frequency.
+- Scikit-learn
+- Random Forest Classifier
+- StandardScaler
+- OneHotEncoder
 
-### 3. Real-Time Inference Dashboard (`app.py`)
-Developed with **Streamlit**, this is the central nervous system aggregating AI predictions and raw data.
-* **Daemon Threads & Mutex Locks:** Standard Streamlit runs sequentially triggering whole-script reloads. To stream live data smoothly without crashing the visualization, we engineered an isolated `threading.Thread`. It asynchronously reads incoming parameters, feeds them into the serialized `rf_model`, and caches the last 50 states using robust `threading.Lock()` controls.
-* **Dynamic Visualization:** Uses `Plotly Graph_Objects` to render beautiful animated gauges indicating failure probability (%), and multi-line time-series telemetry charts to pinpoint exactly *when* the physics started breaking down.
+### Data Processing
 
-```mermaid
-graph TD;
-    A[AI4I 2020 Dataset] -->|Training| B(Random Forest Model);
-    C[simulator.py] -->|Generates Live Telemetry| D[(shared_data.json)];
-    B -->|Predicts| E;
-    D -->|Reads s/sec| E[app.py Streamlit Dashboard];
-    E -->|Visualizes| F[Live Probability Gauge];
-    E -->|Visualizes| G[Real-Time Line Charts];
+- Pandas
+- NumPy
+- Joblib
+
+### Visualization
+
+- Streamlit
+- Plotly
+
+### Development
+
+- Git
+- GitHub
+
+---
+
+# 📂 Project Architecture
+
+```
+                 AI4I 2020 Dataset
+                        │
+                        ▼
+              Data Preprocessing
+                        │
+                        ▼
+            Feature Engineering
+                        │
+                        ▼
+         Random Forest Model Training
+                        │
+                        ▼
+             Trained Model (.joblib)
+                        │
+                        ▼
+         Real-Time Telemetry Simulator
+                        │
+                        ▼
+           JSON Sensor Data Pipeline
+                        │
+                        ▼
+            Machine Learning Inference
+                        │
+                        ▼
+         Streamlit Monitoring Dashboard
+                        │
+                        ▼
+      Equipment Failure Probability
 ```
 
 ---
 
-## 🚀 Quick Start & Installation
+# 📊 Machine Learning Pipeline
 
-Clone the repository and install dependencies using Python 3.9+:
+The predictive model is trained using the **AI4I 2020 Predictive Maintenance Dataset**.
+
+### Data Preprocessing
+
+- Removed identifier columns to prevent target leakage
+- Encoded categorical machine types
+- Standardized numerical features
+- Balanced class distribution using class weights
+
+### Features Used
+
+- Air Temperature
+- Process Temperature
+- Rotational Speed
+- Torque
+- Tool Wear
+- Machine Type
+
+---
+
+# 🤖 Model Selection
+
+Multiple classification algorithms were evaluated.
+
+| Algorithm           | Observation                                         |
+| ------------------- | --------------------------------------------------- |
+| Logistic Regression | Lower performance on nonlinear sensor relationships |
+| Random Forest       | Best balance between accuracy and generalization    |
+| XGBoost             | High performance but greater risk of overfitting    |
+
+The Random Forest Classifier was selected because it achieved the most stable performance on the imbalanced industrial dataset while maintaining strong precision.
+
+---
+
+# 📈 Model Performance
+
+| Metric    | Score |
+| --------- | ----: |
+| Accuracy  |   98% |
+| Precision |   97% |
+| Recall    |   43% |
+| F1 Score  |  0.59 |
+
+The model prioritizes precision to minimize false maintenance alarms while maintaining reliable fault detection.
+
+---
+
+# ⚙️ System Workflow
+
+1. Train the Machine Learning model.
+2. Simulate industrial sensor telemetry.
+3. Generate continuous machine data.
+4. Perform real-time ML inference.
+5. Estimate equipment failure probability.
+6. Visualize machine health through an interactive dashboard.
+
+---
+
+# 📁 Repository Structure
+
+```
+AI-Powered-Predictive-Maintenance-Platform/
+│
+├── models/
+│   └── rf_model.joblib
+│
+├── src/
+│   ├── app.py
+│   ├── simulator.py
+│   ├── train_model.py
+│   └── download_data.py
+│
+├── data/
+│   ├── dataset.csv
+│   └── shared_data.json
+│
+├── requirements.txt
+├── README.md
+├── confusion_matrix.png
+└── PMMS.gif
+```
+
+---
+
+# 🚀 Getting Started
+
+## Clone Repository
 
 ```bash
-git clone https://github.com/enesuslu15/AI-Powered-Predictive-Maintenance-System.git
-cd AI-Powered-Predictive-Maintenance-System
+git clone https://github.com/KONDIUMAVARALAKSHMI/predictive-maintenance-platform.git
+
+cd predictive-maintenance-platform
+```
+
+## Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### Run the System
-Fetch the dataset, train the model, and launch the digital twin interface:
+---
+
+## Download Dataset
 
 ```bash
-# 1. Prepare Data and Train Model
 python src/download_data.py
-python src/train_model.py
+```
 
-# 2. Start the Frontend Dashboard (Terminal 1)
+---
+
+## Train Model
+
+```bash
+python src/train_model.py
+```
+
+---
+
+## Launch Dashboard
+
+```bash
 streamlit run src/app.py
 ```
-*Open the provided Local URL (`http://localhost:8505`) in your browser. The dashboard will wait for live data.*
+
+---
+
+## Start Telemetry Simulator
 
 ```bash
-# 3. Trigger the Machine Simulator (Terminal 2)
 python src/simulator.py
 ```
-*As soon as the simulator starts, the dashboard will dynamically plot the real-time telemetry.*
+
+The dashboard will begin displaying real-time industrial machine telemetry and AI-generated maintenance predictions.
 
 ---
 
-## 📁 Repository Structure
-```text
-Predictive-Maintenance-System/
-├── data/                    # Contains downloaded CSV and real-time shared_data.json
-├── models/                  # Stores the trained rf_model.joblib parameters
-├── src/
-│   ├── app.py               # Streamlit Dashboard (Frontend & Live Inference)
-│   ├── download_data.py     # UCI API Dataset Fetcher
-│   ├── simulator.py         # Hardware Sensor/PLC Simulator
-│   └── train_model.py       # ML Pipeline, Feature Engineering & Modeler
-├── requirements.txt         # Project dependencies
-└── README.md                # Project documentation
-```
+# 💡 Skills Demonstrated
+
+- Machine Learning
+- Predictive Analytics
+- Data Preprocessing
+- Feature Engineering
+- Classification Models
+- Real-Time Data Processing
+- Industrial Data Analysis
+- Data Visualization
+- Python Development
+- Software Engineering
+- Industry 4.0 Concepts
 
 ---
 
-## 🤝 Contribution & License
-Contributions, issues, and feature requests are welcome! 
-This project is open-source and available under the [MIT License](LICENSE).
+# 📌 Resume Highlights
 
+- Developed an AI-powered predictive maintenance platform for industrial equipment monitoring.
+- Built an end-to-end Machine Learning pipeline using Scikit-learn.
+- Designed a real-time industrial telemetry simulator for predictive analytics.
+- Implemented interactive dashboards for live equipment health monitoring.
+- Applied feature engineering and classification techniques to industrial sensor data.
+- Achieved 98% prediction accuracy on equipment failure classification.
+
+---
+
+# 🚀 Future Enhancements
+
+Planned improvements include:
+
+- Docker containerization
+- REST API using FastAPI
+- AWS deployment
+- CI/CD with GitHub Actions
+- Streaming data using Kafka
+- MLOps model monitoring
+- LLM-powered maintenance assistant
+- RAG-based maintenance knowledge retrieval
+- Edge AI deployment
+
+---
+
+# 📄 License
+
+This project is released under the MIT License.
+
+---
+
+## 👩‍💻 Author
+
+**Kondi Uma Varalakshmi**
+
+Computer Science Engineering Student
+
+Interested in:
+
+- Artificial Intelligence
+- Machine Learning
+- Industrial Automation
+- Smart Manufacturing
+- Data Engineering
+- Industry 4.0
