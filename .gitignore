@@ -1,0 +1,15 @@
+@"
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.venv/
+venv/
+
+.env
+
+.streamlit/
+
+data/shared_data.json
+"@ | Out-File -Encoding utf8 .gitignore
