@@ -1,5 +1,14 @@
 # 🏭 AI-Powered Predictive Maintenance Platform for Smart Manufacturing
 
+<p align="center">
+  <img src="PMMS.gif" alt="Project Demo" width="900"/>
+</p>
+
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange)
+![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 An AI-powered predictive maintenance platform that simulates real-time industrial machine telemetry and predicts equipment failures using Machine Learning. The project demonstrates how AI can be applied in Industry 4.0 manufacturing environments to improve equipment reliability, reduce downtime, and support data-driven maintenance decisions.
 
 ---
@@ -184,9 +193,6 @@ AI-Powered-Predictive-Maintenance-Platform/
 │   ├── train_model.py
 │   └── download_data.py
 │
-├── data/
-│   ├── dataset.csv
-│   └── shared_data.json
 │
 ├── requirements.txt
 ├── README.md
